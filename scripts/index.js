@@ -11,8 +11,8 @@ function createCardObject(template, data, deleteButtonHandler) {
     userPlacesItem.querySelector('.card__image').src = data.link;
     userPlacesItem.querySelector('.card__image').alt = data.name;
     userPlacesItem.querySelector('.card__title').textContent = data.name;
-    const button__delete = userPlacesItem.querySelector('.card__delete-button');
-    button__delete.addEventListener('click', function (event) {
+    const buttonDelete = userPlacesItem.querySelector('.card__delete-button');
+    buttonDelete.addEventListener('click', function (event) {
         deleteButtonHandler(userPlacesItem);
     }); 
     return userPlacesItem;
