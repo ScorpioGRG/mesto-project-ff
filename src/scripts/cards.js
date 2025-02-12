@@ -1,5 +1,4 @@
-//import {toggleClass} from './modal';
-// cards.js - замечание 1
+
 export const initialCards = [
   {
     name: "Архыз",
@@ -27,42 +26,32 @@ export const initialCards = [
   },
 ];
 
-//PR6 описание функций карточек
-// функция создания карточек
-//можно лучше При работе с функциями, принимающими большое количество параметров (более 3), рекомендуется использовать объект.
-export function createCardObject(
-  template,
-  data,
-  deleteButtonHandler,
-  popUpHandler,
-  likeHandler
-) {
+export const createCardObject = (template, data, handlers) => {
   const userPlacesItem = template.cloneNode(true);
-  const userPlaceImageLikeButton =
-  userPlacesItem.querySelector(".card__like-button");
+  const userPlaceImageLikeButton = userPlacesItem.querySelector(".card__like-button");
   const buttonDelete = userPlacesItem.querySelector(".card__delete-button");
   const userPlacesImage = userPlacesItem.querySelector(".card__image");
   userPlacesImage.src = data.link;
   userPlacesImage.alt = data.name;
   userPlacesItem.querySelector(".card__title").textContent = data.name;
   userPlacesImage.addEventListener("click", function (event) {
-    popUpHandler(userPlacesImage);
+    handlers.popUpHandler(userPlacesImage);
   });
   userPlaceImageLikeButton.addEventListener("click", function (event) {
-    likeHandler(userPlaceImageLikeButton);
+    handlers.likeHandler(userPlaceImageLikeButton);
   });
   buttonDelete.addEventListener("click", function (event) {
-    deleteButtonHandler(userPlacesItem);
+    handlers.deleteButtonHandler(userPlacesItem);
   });
   return userPlacesItem;
 }
 
 // @todo: Функция удаления карточки
-export const deleteObjectHandler = function (object) {
-  object.remove();
+export const deleteObjectHandler =  (obj) => {
+  obj.remove();
 };
 
 // Функция Лайка карточки - переписана, замечание 2
-export function imageLikeHandler(obj) {
+export const imageLikeHandler = (obj) => {
   obj.classList.toggle("card__like-button_is-active");
 }
