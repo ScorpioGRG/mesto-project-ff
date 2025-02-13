@@ -17,8 +17,6 @@ const closePopUpByEsc = (evt) => {
   }
 }
 
-export const closePopUpByClick = (evt) => {
-  //if(evt.target.classList.contains('popup_is-opened')) {
+const closePopUpByClick = (evt) => {
     handlePopUpClose(evt.target);
- // }
 }

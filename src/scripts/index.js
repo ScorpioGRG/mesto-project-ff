@@ -7,7 +7,6 @@ import {
 } from "./cards.js";
 
 import {
-  closePopUpByClick,
   handlePopUpOpen,
   handlePopUpClose
 } from "./modal.js";
@@ -24,8 +23,6 @@ const editOpenBtn = document.querySelector(".profile__edit-button");
 const addOpenBtn = document.querySelector(".profile__add-button");
 const editPopUp = document.querySelector(".popup_type_edit");
 const addPopUp = document.querySelector(".popup_type_new-card");
-//const addPopUpCloseBtn = addPopUp.querySelector(".popup__close");
-//const editPopUpCloseBtn = editPopUp.querySelector(".popup__close");
 const editProfileForm = document.forms["edit-profile"];
 const editProfileFormnNameInput = editProfileForm.name;
 const editProfileFormnJobInput = editProfileForm.description;
@@ -34,7 +31,6 @@ const currentProfileJob = document.querySelector(".profile__description");
 const popUpImage = document.querySelector(".popup_type_image");
 const popUpImageProp = popUpImage.querySelector(".popup__image");
 const popUpImageDesc = popUpImage.querySelector(".popup__caption");
-//const popUpImageCloseBtn = popUpImage.querySelector(".popup__close");
 const addNewPlaceForm = document.forms["new-place"];
 const newPlaceUrl = addNewPlaceForm.link;
 const newPlaceDescr = addNewPlaceForm["place-name"];
