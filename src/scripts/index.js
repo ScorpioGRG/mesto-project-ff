@@ -24,8 +24,8 @@ const editOpenBtn = document.querySelector(".profile__edit-button");
 const addOpenBtn = document.querySelector(".profile__add-button");
 const editPopUp = document.querySelector(".popup_type_edit");
 const addPopUp = document.querySelector(".popup_type_new-card");
-const addPopUpCloseBtn = addPopUp.querySelector(".popup__close");
-const editPopUpCloseBtn = editPopUp.querySelector(".popup__close");
+//const addPopUpCloseBtn = addPopUp.querySelector(".popup__close");
+//const editPopUpCloseBtn = editPopUp.querySelector(".popup__close");
 const editProfileForm = document.forms["edit-profile"];
 const editProfileFormnNameInput = editProfileForm.name;
 const editProfileFormnJobInput = editProfileForm.description;
@@ -34,7 +34,7 @@ const currentProfileJob = document.querySelector(".profile__description");
 const popUpImage = document.querySelector(".popup_type_image");
 const popUpImageProp = popUpImage.querySelector(".popup__image");
 const popUpImageDesc = popUpImage.querySelector(".popup__caption");
-const popUpImageCloseBtn = popUpImage.querySelector(".popup__close");
+//const popUpImageCloseBtn = popUpImage.querySelector(".popup__close");
 const addNewPlaceForm = document.forms["new-place"];
 const newPlaceUrl = addNewPlaceForm.link;
 const newPlaceDescr = addNewPlaceForm["place-name"];
@@ -53,11 +53,8 @@ const cardHandlers = {
 }
 
 const intPopUpWindows = () => {
-  // добавить класс плавного открытия-закрытия popUp-ов
-  popUpImage.classList.add("popup_is-animated");
-  editPopUp.classList.add("popup_is-animated");
-  addPopUp.classList.add("popup_is-animated");
-  //добавить листенеры на элементы
+  //установить общие свойства модальных окон 
+  armPopUps();
   // открыть Add
   addOpenBtn.addEventListener("click", function () {
     if (newPlaceDescr.value !== "" || newPlaceUrl.value !== "") {
@@ -78,18 +75,6 @@ const intPopUpWindows = () => {
     currentProfileJob.textContent = editProfileFormnJobInput.value;
     handlePopUpClose(editPopUp);
   });
-  //закрыть Edit
-  editPopUpCloseBtn.addEventListener("click", function () {
-    handlePopUpClose(editPopUp);
-  });
-  //закрыть Image
-  popUpImageCloseBtn.addEventListener("click", function () {
-    handlePopUpClose(popUpImage);
-  });
-  //закрыть Add
-  addPopUpCloseBtn.addEventListener("click", function (evt) {
-    handlePopUpClose(addPopUp);
-  });
   //Сабмит edit
   addNewPlaceForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
@@ -101,15 +86,24 @@ const intPopUpWindows = () => {
       placesContainerCardsList.prepend(
         createCardObject(cardTemplateItem, newCard, cardHandlers)
       );
+      addNewPlaceForm.reset(); 
     }
     handlePopUpClose(addPopUp);
   });
-  //click listener load once and never unload
-  document.addEventListener("click", closePopUpByClick);
 }
-
+//установка общих свойств для попапов
+const armPopUps = () =>{
+  let popUps = document.querySelectorAll('.popup');
+  popUps.forEach((item)=> {
+    item.classList.add('popup_is-animated');
+    item.querySelector('.popup__close').addEventListener("click", function () {
+      handlePopUpClose(item);
+    });
+  });
+}
 //исполняемый код
 intPopUpWindows();
+
 initialCards.forEach((item) => {
   placesContainerCardsList.append(
     createCardObject(cardTemplateItem, item,cardHandlers)
