@@ -7,6 +7,11 @@ import {
 } from "./cards.js";
 
 import {
+  enableValidation,
+  clearValidation
+} from "./validation.js"
+
+import {
   handlePopUpOpen,
   handlePopUpClose
 } from "./modal.js";
@@ -105,3 +110,6 @@ initialCards.forEach((item) => {
     createCardObject(cardTemplateItem, item,cardHandlers)
   );
 });
+
+//PR7
+enableValidation(addNewPlaceForm, null);
