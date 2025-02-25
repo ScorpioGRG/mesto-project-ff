@@ -1,4 +1,4 @@
-export const enableValidation = (form, config) => {
+/*export const enableValidation = (form, config) => {
   let formInput = form.querySelectorAll('.popup__input');
   console.log(formInput);
   formInput.forEach(input => {
@@ -12,20 +12,71 @@ export const enableValidation = (form, config) => {
     });
   });
 
+}*/
+
+//проверить валидность и вызвать обработчик
+const checkValidity = (form, input) => {
+  if (!input.validity.valid) {
+    showInputError(form, input, input.validationMessage)
+  } else {
+    hideInputError(form, input);
+  }
 }
+
+
+//подсветить поле и вывести текст
+const showInputError = (form, input, errorMessage) => {
+  let textErrorDescInput = form.querySelector(`.${input.id}-error`);
+  input.classList.add('popup__input_error');
+  textErrorDescInput.textContent = errorMessage;
+}
+
+
+//убрать подсветку и заменить текст пустой строкой
+const hideInputError = (form, input) => {
+  let textErrorDescInput = form.querySelector(`.${input.id}-error`);
+  input.classList.remove('popup__input_error');
+  textErrorDescInput.textContent = '';
+}
+
+
+//найти все инпуты, повесить листенеры с обработчиками
+const armFormValidationEventListeners = (form) => {
+  let inputsList = Array.from(form.querySelectorAll('.popup__input'));
+  inputsList.forEach((inputItem) => {
+    inputItem.addEventListener('input', () => { 
+      checkValidity(form, inputItem);
+    })
+  });
+}
+
+const checkFormValidity = (inputsList) => {
+  return inputsList.some((inputElement) => {
+    return !inputElement.validity.valid;
+  });
+}
+
+const toggleButton = (inputsList, button) => {
+    if (checkFormValidity(inputsList)) {  button.classList.add('button_disabled'); } else
+     buttonElement.classList.remove('button_disabled');
+}
+  
+
+
+export const startValidation = () => {
+  console.log('startValidation called')
+  let formsList = Array.from(document.querySelectorAll(".popup__form"));
+  formsList.forEach((formItem) => {
+    console.log('startValidation form list', formItem)
+    armFormValidationEventListeners(formItem);
+  }); 
+}
+
+
+
 /*
 export const clearValidation =() => {
 
 }*/
 
-const showInputError = (obj, cls) => {
-  obj.classList.add(cls);
-}
 
-/*for inspiration
-https://practicum.yandex.ru/trainer/fullstack-developer-plus/lesson/a358b3e2-c8ba-4f3c-87f1-61dc2fbcb7af/task/b99b1d1c-88cc-49ad-b51e-48343cfd2bb2/
-https://practicum.yandex.ru/trainer/fullstack-developer-plus/lesson/51441fc6-d3f4-4b8b-a4eb-6f8b2da707b3/task/b4ea547b-708c-4dbc-ba6b-fb1001b50c11/
-
-
-
-*/

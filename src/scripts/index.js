@@ -8,7 +8,8 @@ import {
 
 import {
   enableValidation,
-  clearValidation
+  startValidation
+  //clearValidation
 } from "./validation.js"
 
 import {
@@ -107,9 +108,10 @@ intPopUpWindows();
 
 initialCards.forEach((item) => {
   placesContainerCardsList.append(
-    createCardObject(cardTemplateItem, item,cardHandlers)
+    createCardObject(cardTemplateItem, item, cardHandlers)
   );
 });
 
 //PR7
-enableValidation(addNewPlaceForm, null);
+//enableValidation(addNewPlaceForm, null);
+startValidation();
