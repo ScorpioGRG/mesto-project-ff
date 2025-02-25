@@ -8,7 +8,7 @@ import {
 
 import {
   enableValidation,
-  startValidation
+  resetValidation
   //clearValidation
 } from "./validation.js"
 
@@ -40,6 +40,7 @@ const popUpImageDesc = popUpImage.querySelector(".popup__caption");
 const addNewPlaceForm = document.forms["new-place"];
 const newPlaceUrl = addNewPlaceForm.link;
 const newPlaceDescr = addNewPlaceForm["place-name"];
+const addNewPlaceFormSubmitBtn = addNewPlaceForm.querySelector('.popup__button');
 //PR6
 const imagePopUpHandler = (userImage) => {
   popUpImageProp.src = userImage.src;
@@ -61,6 +62,7 @@ const intPopUpWindows = () => {
   addOpenBtn.addEventListener("click", function () {
     if (newPlaceDescr.value !== "" || newPlaceUrl.value !== "") {
       addNewPlaceForm.reset();
+      resetValidation(addNewPlaceForm);
     }
     handlePopUpOpen(addPopUp);
   });
@@ -90,6 +92,7 @@ const intPopUpWindows = () => {
       );
       addNewPlaceForm.reset(); 
     }
+    addNewPlaceFormSubmitBtn.classList.add('popup__button_disabled');
     handlePopUpClose(addPopUp);
   });
 }
@@ -114,4 +117,4 @@ initialCards.forEach((item) => {
 
 //PR7
 //enableValidation(addNewPlaceForm, null);
-startValidation();
+enableValidation();

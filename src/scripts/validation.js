@@ -43,9 +43,12 @@ const hideInputError = (form, input) => {
 //найти все инпуты, повесить листенеры с обработчиками
 const armFormValidationEventListeners = (form) => {
   let inputsList = Array.from(form.querySelectorAll('.popup__input'));
+  let btn = form.querySelector('.popup__button');
+  toggleButton(inputsList, btn);
   inputsList.forEach((inputItem) => {
     inputItem.addEventListener('input', () => { 
       checkValidity(form, inputItem);
+      toggleButton(inputsList, btn);
     })
   });
 }
@@ -57,13 +60,13 @@ const checkFormValidity = (inputsList) => {
 }
 
 const toggleButton = (inputsList, button) => {
-    if (checkFormValidity(inputsList)) {  button.classList.add('button_disabled'); } else
-     buttonElement.classList.remove('button_disabled');
+    if (checkFormValidity(inputsList)) { button.classList.add('popup__button_disabled'); } else
+     button.classList.remove('popup__button_disabled');
 }
   
 
 
-export const startValidation = () => {
+export const enableValidation = () => {
   console.log('startValidation called')
   let formsList = Array.from(document.querySelectorAll(".popup__form"));
   formsList.forEach((formItem) => {
@@ -72,6 +75,12 @@ export const startValidation = () => {
   }); 
 }
 
+export const resetValidation = (form) => {
+  let inputsList = Array.from(form.querySelectorAll('.popup__input'));
+  inputsList.forEach((inputItem) => {
+    hideInputError(form, inputItem);
+  });
+}
 
 
 /*
