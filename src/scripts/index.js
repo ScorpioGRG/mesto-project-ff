@@ -109,14 +109,21 @@ const armPopUps = () =>{
   });
 }
 //игры с АПИ
- const getData = (addr, token) => {  return fetch(addr, {
+ const getData =  (addr, token) => {return fetch(addr, {
     headers: {
       authorization: token
     }
   })
     .then(res => res.json())
     .then((result) => {
-      console.log(result);
+      //console.log('result', result);
+      //return result;
+      //setProfile(result.name, result.about, result.avatar)
+      return new Promise((resolve, reject)=> {
+        resolve(result);
+
+
+      });
     }); 
  } 
 
@@ -124,8 +131,8 @@ const armPopUps = () =>{
  const setProfile = (userName, userDescr, userImage) => {
   currentProfileName.textContent = userName;
   currentProfileJob.textContent = userDescr;
-  currentProfileImage.src = userImage;
-  currentProfileImage.alt = userName;
+  currentProfileImage.style.cssText= 'background-image: url(' + userImage +')';
+  console.log('background-image:' + userImage);
  }
 
 
@@ -141,5 +148,17 @@ initialCards.forEach((item) => {
 //PR7
 //enableValidation(addNewPlaceForm, null);
 enableValidation();
+getData('https://nomoreparties.co/v1/wff-cohort-33/users/me', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a')
+.then((evt) => {
+  console.log('evt', evt.name);
+  setProfile(evt.name, evt.about, evt.avatar);
+});
 
-getData('https://nomoreparties.co/v1/wff-cohort-33/users/me', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a');
+/*let user = new Promise (function(getData, reject) { 
+  getData('https://nomoreparties.co/v1/wff-cohort-33/users/me', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a')
+  });*/
+//user.then(console.log('data', data));
+ /* getData('https://nomoreparties.co/v1/wff-cohort-33/users/me', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a')
+  .then(console.log('result', data));*/
+//user.then(console.log('user promise', user));
+//console.log('user:', user);

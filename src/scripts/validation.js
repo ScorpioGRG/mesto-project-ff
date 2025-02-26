@@ -72,10 +72,10 @@ const toggleButton = (inputsList, button) => {
 
 
 export const enableValidation = () => {
-  console.log('startValidation called')
+  //console.log('startValidation called')
   let formsList = Array.from(document.querySelectorAll(".popup__form"));
   formsList.forEach((formItem) => {
-    console.log('startValidation form list', formItem)
+    //console.log('startValidation form list', formItem)
     armFormValidationEventListeners(formItem);
   }); 
 }
