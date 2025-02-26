@@ -24,7 +24,7 @@ const getCardTemplate = () => {
 const cardTemplateItem = getCardTemplate();
 // @todo: DOM узлы
 const placesContainer = document.querySelector(".places");
-const placesContainerCardsList = placesContainer.querySelector(".places__list"); //замечание 1
+const placesContainerCardsList = placesContainer.querySelector(".places__list"); 
 const editOpenBtn = document.querySelector(".profile__edit-button");
 const addOpenBtn = document.querySelector(".profile__add-button");
 const editPopUp = document.querySelector(".popup_type_edit");
@@ -34,6 +34,7 @@ const editProfileFormnNameInput = editProfileForm.name;
 const editProfileFormnJobInput = editProfileForm.description;
 const currentProfileName = document.querySelector(".profile__title");
 const currentProfileJob = document.querySelector(".profile__description");
+const currentProfileImage = document.querySelector(".profile__image");
 const popUpImage = document.querySelector(".popup_type_image");
 const popUpImageProp = popUpImage.querySelector(".popup__image");
 const popUpImageDesc = popUpImage.querySelector(".popup__caption");
@@ -61,15 +62,16 @@ const intPopUpWindows = () => {
   // открыть Add
   addOpenBtn.addEventListener("click", function () {
     if (newPlaceDescr.value !== "" || newPlaceUrl.value !== "") {
-      addNewPlaceForm.reset();
-      resetValidation(addNewPlaceForm);
+      addNewPlaceForm.reset();    
     }
+    resetValidation(addNewPlaceForm);
     handlePopUpOpen(addPopUp);
   });
   //открыть Edit
   editOpenBtn.addEventListener("click", function () {
     editProfileFormnNameInput.value = currentProfileName.textContent;
     editProfileFormnJobInput.value = currentProfileJob.textContent;
+    resetValidation(editProfileForm);
     handlePopUpOpen(editPopUp);
   });
   //сабмит Edit
@@ -106,6 +108,27 @@ const armPopUps = () =>{
     });
   });
 }
+//игры с АПИ
+ const getData = (addr, token) => {  return fetch(addr, {
+    headers: {
+      authorization: token
+    }
+  })
+    .then(res => res.json())
+    .then((result) => {
+      console.log(result);
+    }); 
+ } 
+
+ //Установить профиль
+ const setProfile = (userName, userDescr, userImage) => {
+  currentProfileName.textContent = userName;
+  currentProfileJob.textContent = userDescr;
+  currentProfileImage.src = userImage;
+  currentProfileImage.alt = userName;
+ }
+
+
 //исполняемый код
 intPopUpWindows();
 
@@ -118,3 +141,5 @@ initialCards.forEach((item) => {
 //PR7
 //enableValidation(addNewPlaceForm, null);
 enableValidation();
+
+getData('https://nomoreparties.co/v1/wff-cohort-33/users/me', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a');

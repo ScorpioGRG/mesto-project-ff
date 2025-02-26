@@ -39,11 +39,11 @@
       <h3 class="popup__title">Редактировать профиль</h3>
       <form class="popup__form" name="edit-profile">
         <label class="form__input-zone">
-          <input type="text" id="profile-name-input" name="name" class="popup__input popup__input_type_name" placeholder="Имя" required>
+          <input type="text" id="profile-name-input" name="name" class="popup__input popup__input_type_name" placeholder="Имя" minlength="2" maxlength="40"  pattern="^[a-zA-Zа-яА-яёЁ\s\-]+$" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" required>
           <span class="popup__input_error_text profile-name-input-error"></span> <!--error message @PR7-->
         </label>
         <label class="form__input-zone">
-          <input type="text" id="profile-descr-input" name="description" class="popup__input popup__input_type_description" placeholder="Занятие" required>
+          <input type="text" id="profile-descr-input" name="description" class="popup__input popup__input_type_description" placeholder="Занятие"  minlength="2"  maxlength="200" pattern="^[a-zA-Zа-яА-яёЁ\s\-]+$" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" required>
           <span class="popup__input_error_text profile-descr-input-error"></span> <!--error message @PR7-->
         </label>
         <button type="submit" class="button popup__button">Сохранить</button>
@@ -57,11 +57,11 @@
       <h3 class="popup__title">Новое место</h3>
       <form class="popup__form" name="new-place">
         <label class="form__input-zone">
-          <input type="text" id="place-name-input" name="place-name" class="popup__input popup__input_type_card-name" placeholder="Название" required>
+          <input type="text" id="place-name-input" name="place-name" class="popup__input popup__input_type_card-name" placeholder="Название" minlength="2" maxlength="30"  pattern="^[a-zA-Zа-яА-яёЁ\s\-]+$" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" required>
           <span class="popup__input_error_text place-name-input-error"></span> <!--error message @PR7-->
         </label>
         <label class="form__input-zone">
-          <input type="url" id="place-url-input" name="link" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку" required>
+          <input type="url" id="place-url-input" name="link" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку"  data-error-message="Кастомное сообщение: введите URL" equired>
           <span class="popup__input_error_text place-url-input-error"></span> <!--error message @PR7-->
         </label>
         <button type="submit" class="button popup__button">Сохранить</button>

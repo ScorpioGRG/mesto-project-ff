@@ -17,7 +17,7 @@
 //проверить валидность и вызвать обработчик
 const checkValidity = (form, input) => {
   if (!input.validity.valid) {
-    showInputError(form, input, input.validationMessage)
+    showInputError(form, input, /*input.validationMessage*/ input.dataset.errorMessage)
   } else {
     hideInputError(form, input);
   }
@@ -60,8 +60,13 @@ const checkFormValidity = (inputsList) => {
 }
 
 const toggleButton = (inputsList, button) => {
-    if (checkFormValidity(inputsList)) { button.classList.add('popup__button_disabled'); } else
+    if (checkFormValidity(inputsList)) { 
+      button.classList.add('popup__button_disabled'); 
+      button.setAttribute('disabled', true);
+    } else {
      button.classList.remove('popup__button_disabled');
+     button.removeAttribute('disabled');
+    }
 }
   
 
@@ -83,9 +88,18 @@ export const resetValidation = (form) => {
 }
 
 
+
 /*
 export const clearValidation =() => {
 
 }*/
 
+/*new_enableValidation = (validationObject) => {
+  validationObject.forEach((obj) =>{
+    new_armValidation()
+  });
 
+} 
+
+
+*/
