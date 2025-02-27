@@ -26,12 +26,18 @@ export const initialCards = [
   },
 ];
 
-export const createCardObject = (template, data, handlers) => {
+
+//DELETE https://nomoreparties.co/v1/cohortId/cards/cardId 
+
+
+
+export const createCardObject = (template, data, handlers, userID, api) => {
   const userPlacesItem = template.cloneNode(true);
   const userPlaceImageLikeButton = userPlacesItem.querySelector(".card__like-button");
   const userPlaceImageLikeCount = userPlacesItem.querySelector(".card__like-count");
   const buttonDelete = userPlacesItem.querySelector(".card__delete-button");
   const userPlacesImage = userPlacesItem.querySelector(".card__image");
+  const userPlaceImageOwner = data.owner._id;
   userPlacesImage.src = data.link;
   userPlacesImage.alt = data.name;
   userPlaceImageLikeCount.textContent = data.likes.length;
@@ -42,14 +48,27 @@ export const createCardObject = (template, data, handlers) => {
   userPlaceImageLikeButton.addEventListener("click", function (event) {
     handlers.likeHandler(userPlaceImageLikeButton);
   });
-  buttonDelete.addEventListener("click", function (event) {
-    handlers.deleteButtonHandler(userPlacesItem);
-  });
+  if(userPlaceImageOwner === userID) {
+    buttonDelete.addEventListener("click", function (event) {
+      //handlers.dataHandler(apiAddress, api.authToken, 'DELETE', null);
+      
+      //handlers.dataHandler()
+     handlers.deleteButtonHandler(userPlacesItem, api, data);
+    });
+  } else buttonDelete.classList.add("popup__button_hidden");
   return userPlacesItem;
 }
 
 // @todo: Функция удаления карточки
-export const deleteObjectHandler =  (obj) => {
+export const deleteObjectHandler =  (obj,api,data) => {
+  let apiAddress = api.linkCards + '/' + data._id;
+  fetch(apiAddress, {
+    method: 'DELETE',
+    headers: {
+      authorization: api.authToken
+   }
+  })
+  .then ((result) => { obj.remove();})
   obj.remove();
 };
 
