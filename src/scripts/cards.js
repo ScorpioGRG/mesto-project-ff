@@ -29,10 +29,12 @@ export const initialCards = [
 export const createCardObject = (template, data, handlers) => {
   const userPlacesItem = template.cloneNode(true);
   const userPlaceImageLikeButton = userPlacesItem.querySelector(".card__like-button");
+  const userPlaceImageLikeCount = userPlacesItem.querySelector(".card__like-count");
   const buttonDelete = userPlacesItem.querySelector(".card__delete-button");
   const userPlacesImage = userPlacesItem.querySelector(".card__image");
   userPlacesImage.src = data.link;
   userPlacesImage.alt = data.name;
+  userPlaceImageLikeCount.textContent = data.likes.length;
   userPlacesItem.querySelector(".card__title").textContent = data.name;
   userPlacesImage.addEventListener("click", function (event) {
     handlers.popUpHandler(userPlacesImage);

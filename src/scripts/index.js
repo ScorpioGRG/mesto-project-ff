@@ -42,6 +42,7 @@ const addNewPlaceForm = document.forms["new-place"];
 const newPlaceUrl = addNewPlaceForm.link;
 const newPlaceDescr = addNewPlaceForm["place-name"];
 const addNewPlaceFormSubmitBtn = addNewPlaceForm.querySelector('.popup__button');
+let ownerID;
 //PR6
 const imagePopUpHandler = (userImage) => {
   popUpImageProp.src = userImage.src;
@@ -109,6 +110,7 @@ const armPopUps = () =>{
   });
 }
 //игры с АПИ
+//получить данные
  const getData =  (addr, token) => {return fetch(addr, {
     headers: {
       authorization: token
@@ -116,49 +118,146 @@ const armPopUps = () =>{
   })
     .then(res => res.json())
     .then((result) => {
-      //console.log('result', result);
-      //return result;
-      //setProfile(result.name, result.about, result.avatar)
+     /* 
+     счетчик лайков 
+     result.forEach((item) => {
+        console.log('likes', item.likes.length);
+      });*/
+
+
+
       return new Promise((resolve, reject)=> {
+        
         resolve(result);
-
-
       });
     }); 
  } 
 
+ let testPerson = {name: 'Родченко', about: 'photographer' };
+ let testImage = { name: 'Припять', link: 'https://sun9-58.userapi.com/impg/PKjUPNzRPQmTrSKtOQEvcvzC3A78eMbx0Shs3g/eDaJVNCorTw.jpg?size=1920x1280&quality=96&sign=b494541b54ed059a0b57baab88b58944&type=album'};
+
+
+ //Рабочая функция, меняет профиль
+const patchData = (addr, token, data) => {
+  return  fetch(addr, {
+    method: 'PATCH',
+    headers: {
+      authorization: token,
+      'Content-Type': 'application/json'
+   },
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then((result) => {
+    return new Promise((resolve, reject)=> {
+      console.log('patch result', result.name);
+      resolve(result);
+    });
+  })
+}
+
+const postData = (addr,token, data)  => {
+  return  fetch(addr, {
+    method: 'POST',
+    headers: {
+      authorization: token,
+      'Content-Type': 'application/json'
+   },
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then((result) => {
+    return new Promise((resolve, reject)=> {
+      console.log('post result', result.name);
+      resolve(result);
+    });
+  })
+}
+
+//Универсальная функция PATCH/POST @toDO addr,token, mtd - загнать в объект
+const sendData = (addr,token, mtd, data)  => {
+  return  fetch(addr, {
+    method: mtd,
+    headers: {
+      authorization: token,
+      'Content-Type': 'application/json'
+   },
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then((result) => {
+    return new Promise((resolve, reject)=> {
+      console.log('post result', result.name);
+      resolve(result);
+    });
+  })
+}
+
+
+ 
+
  //Установить профиль
- const setProfile = (userName, userDescr, userImage) => {
-  currentProfileName.textContent = userName;
-  currentProfileJob.textContent = userDescr;
-  currentProfileImage.style.cssText= 'background-image: url(' + userImage +')';
-  console.log('background-image:' + userImage);
+ const setProfile = (profileData) => {
+  currentProfileName.textContent = profileData.name;
+  currentProfileJob.textContent = profileData.about;
+  currentProfileImage.style.cssText= 'background-image: url(' + profileData.avatar +')';
+  //console.log('background-image:' + userImage);
  }
 
+ 
 
 //исполняемый код
 intPopUpWindows();
 
-initialCards.forEach((item) => {
+//тестовый вызов смены профиля
+//sendData('https://nomoreparties.co/v1/wff-cohort-33/users/me', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a', 'PATCH', testPerson);
+
+
+// patchData('https://nomoreparties.co/v1/wff-cohort-33/users/me', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a', testPerson);
+
+//тестовое добовление карточки
+// postData('https://nomoreparties.co/v1/wff-cohort-33/cards', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a',testImage);
+
+//эта функция инициирует отрисовку из файла - так было в PR6
+/*initialCards.forEach((item) => {
   placesContainerCardsList.append(
     createCardObject(cardTemplateItem, item, cardHandlers)
   );
-});
+});*/
 
 //PR7
 //enableValidation(addNewPlaceForm, null);
 enableValidation();
+
+//грузим профиль через промис
 getData('https://nomoreparties.co/v1/wff-cohort-33/users/me', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a')
 .then((evt) => {
-  console.log('evt', evt.name);
-  setProfile(evt.name, evt.about, evt.avatar);
-});
+  console.log('ME', evt._id);
+  setProfile(evt);
+  return new Promise((resolve, reject)=> {
+    resolve(evt._id);
+  });
 
-/*let user = new Promise (function(getData, reject) { 
-  getData('https://nomoreparties.co/v1/wff-cohort-33/users/me', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a')
-  });*/
-//user.then(console.log('data', data));
- /* getData('https://nomoreparties.co/v1/wff-cohort-33/users/me', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a')
-  .then(console.log('result', data));*/
-//user.then(console.log('user promise', user));
-//console.log('user:', user);
+
+  //ownerID = evt._id;
+  }) .then((id) => {
+
+    console.log('id' , id);
+
+//получаем карточки c сервера
+getData('https://nomoreparties.co/v1/wff-cohort-33/cards', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a')
+.then((outData) => {
+  outData._id = id;
+  console.log('out', outData);
+  //console.log('link', out[1].link);
+  //console.log('name', out[1].name);
+  outData.forEach((item) => {
+    placesContainerCardsList.append(
+      createCardObject(cardTemplateItem, item, cardHandlers)
+    );
+  });
+});
+})
+
+
+//@to-do delete button + promise.all посмотреть
