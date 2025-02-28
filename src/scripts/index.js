@@ -245,7 +245,7 @@ let a = getData(apiSetUp.linkProfile, apiSetUp.authToken)
   });
 });
 //грузим данные карточек
-let b = getData(apiSetUp.linkCards , apiSetUp.authToken);
+let b = getData(apiSetUp.linkCards, apiSetUp.authToken);
 
 //собираем промисы
 let promises = [a,b];
@@ -253,7 +253,7 @@ let promises = [a,b];
 //рисуем карточки если все промисы выполнены
 Promise.all(promises)
 .then((dataSet) => {
-  console.log('dateset', dataSet[1][0]);
+  //console.log('dateset', dataSet[1][0]);
   dataSet[1].forEach((dataItem) =>{
     placesContainerCardsList.append(
       createCardObject(cardTemplateItem, dataItem, cardHandlers, dataSet[0], apiSetUp)
