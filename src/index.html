@@ -15,7 +15,10 @@
   </header>
   <main class="content">
     <section class="profile page__section">
-      <div class="profile__image" style="background-image: url(<%= require('./images/avatar.jpg') %>);"></div>
+      <div class="profile__image">
+        <button type="button" class="profile__edit__avatar_button" style="background-image: url(<%= require('./images/avatar.jpg') %>);">
+        </button>
+      </div>
       <div class="profile__info">
         <h1 class="profile__title">Жак-Ив Кусто</h1>
         <button class="profile__edit-button" type="button"></button>
@@ -39,11 +42,11 @@
       <h3 class="popup__title">Редактировать профиль</h3>
       <form class="popup__form" name="edit-profile">
         <label class="form__input-zone">
-          <input type="text" id="profile-name-input" name="name" class="popup__input popup__input_type_name" placeholder="Имя" minlength="2" maxlength="40"  pattern="^[a-zA-Zа-яА-яёЁ\s\-]+$" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" required>
+          <input type="text" id="profile-name-input" name="name" class="popup__input popup__input_type_name" placeholder="Имя" minlength="2" maxlength="40" pattern="^[a-zA-Zа-яА-яёЁ\s\-]+$" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" required>
           <span class="popup__input_error_text profile-name-input-error"></span> <!--error message @PR7-->
         </label>
         <label class="form__input-zone">
-          <input type="text" id="profile-descr-input" name="description" class="popup__input popup__input_type_description" placeholder="Занятие"  minlength="2"  maxlength="200" pattern="^[a-zA-Zа-яА-яёЁ\s\-]+$" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" required>
+          <input type="text" id="profile-descr-input" name="description" class="popup__input popup__input_type_description" placeholder="Занятие" minlength="2" maxlength="200" pattern="^[a-zA-Zа-яА-яёЁ\s\-]+$" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" required>
           <span class="popup__input_error_text profile-descr-input-error"></span> <!--error message @PR7-->
         </label>
         <button type="submit" class="button popup__button">Сохранить</button>
@@ -57,11 +60,11 @@
       <h3 class="popup__title">Новое место</h3>
       <form class="popup__form" name="new-place">
         <label class="form__input-zone">
-          <input type="text" id="place-name-input" name="place-name" class="popup__input popup__input_type_card-name" placeholder="Название" minlength="2" maxlength="30"  pattern="^[a-zA-Zа-яА-яёЁ\s\-]+$" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" required>
+          <input type="text" id="place-name-input" name="place-name" class="popup__input popup__input_type_card-name" placeholder="Название" minlength="2" maxlength="30" pattern="^[a-zA-Zа-яА-яёЁ\s\-]+$" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" required>
           <span class="popup__input_error_text place-name-input-error"></span> <!--error message @PR7-->
         </label>
         <label class="form__input-zone">
-          <input type="url" id="place-url-input" name="link" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку"  data-error-message="Кастомное сообщение: введите URL" equired>
+          <input type="url" id="place-url-input" name="link" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку"  data-error-message="Введите адрес сайта" required>
           <span class="popup__input_error_text place-url-input-error"></span> <!--error message @PR7-->
         </label>
         <button type="submit" class="button popup__button">Сохранить</button>
@@ -75,6 +78,21 @@
       <p class="popup__caption"></p>
     </div>
   </div>
+<!--PR7 edit avatar card-->
+<div class="popup popup_type_edit-avatar">
+  <div class="popup__content">
+    <button type="button" class="popup__close"></button>
+    <h3 class="popup__title">Обновить аватар</h3>
+    <form class="popup__form" name="change-avatar">
+      <label class="form__input-zone">
+        <input type="url" id="avatar-url-input" name="link" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку"  data-error-message="Введите адрес сайта" required>
+        <span class="popup__input_error_text avatar-url-input-error"></span> <!--error message @PR7-->
+      </label>
+      <button type="submit" class="button popup__button">Сохранить</button>
+    </form>
+  </div>
+</div>
+
 </div>
 <!--<script src="./scripts/cards.js"></script>
 <script src="./scripts/index.js" defer></script> --> <!--для npm-->

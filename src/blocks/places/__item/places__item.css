@@ -6,9 +6,11 @@
     display: flex;
     flex-direction: column;
     place-items: center;
+    gap: 5px;
 }
 
 .card__like-count {
     margin: 0px;
     padding: 0px;
+    font-size: 10px;
 }

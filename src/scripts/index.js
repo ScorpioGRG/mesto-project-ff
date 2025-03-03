@@ -1,6 +1,5 @@
 import "../pages/index.css"; // это под npm
 import {
-  initialCards,
   createCardObject,
   deleteObjectHandler,
   imageLikeHandler,
@@ -8,14 +7,17 @@ import {
 
 import {
   enableValidation,
-  resetValidation
-  //clearValidation
+  clearValidation
 } from "./validation.js"
 
 import {
   handlePopUpOpen,
   handlePopUpClose
 } from "./modal.js";
+
+import {
+  apiHandler
+} from "./api.js";
 
 // @todo: Темплейт карточки
 const getCardTemplate = () => {
@@ -26,15 +28,17 @@ const cardTemplateItem = getCardTemplate();
 const placesContainer = document.querySelector(".places");
 const placesContainerCardsList = placesContainer.querySelector(".places__list"); 
 const editOpenBtn = document.querySelector(".profile__edit-button");
+const editAvatarOpenBtn = document.querySelector(".profile__edit__avatar_button");
 const addOpenBtn = document.querySelector(".profile__add-button");
 const editPopUp = document.querySelector(".popup_type_edit");
+const editAvatarPopUp =  document.querySelector(".popup_type_edit-avatar");
 const addPopUp = document.querySelector(".popup_type_new-card");
 const editProfileForm = document.forms["edit-profile"];
 const editProfileFormnNameInput = editProfileForm.name;
 const editProfileFormnJobInput = editProfileForm.description;
 const currentProfileName = document.querySelector(".profile__title");
 const currentProfileJob = document.querySelector(".profile__description");
-const currentProfileImage = document.querySelector(".profile__image");
+const currentProfileImage = document.querySelector(".profile__edit__avatar_button");
 const popUpImage = document.querySelector(".popup_type_image");
 const popUpImageProp = popUpImage.querySelector(".popup__image");
 const popUpImageDesc = popUpImage.querySelector(".popup__caption");
@@ -42,16 +46,25 @@ const addNewPlaceForm = document.forms["new-place"];
 const newPlaceUrl = addNewPlaceForm.link;
 const newPlaceDescr = addNewPlaceForm["place-name"];
 const addNewPlaceFormSubmitBtn = addNewPlaceForm.querySelector('.popup__button');
+const changeAvatarForm = document.forms["change-avatar"];
+const changeAvatarUrl = changeAvatarForm.link;
 
-
-const apiSetUp = {
-authToken: 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a',
-linkProfile: 'https://nomoreparties.co/v1/wff-cohort-33/users/me',
-linkCards: 'https://nomoreparties.co/v1/wff-cohort-33/cards'
-
+//не const, что бы далее записать сюда свой Id
+let apiDataSet = {
+  authToken: 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a',
+  linkProfile: 'https://nomoreparties.co/v1/wff-cohort-33/users/me',
+  linkCards: 'https://nomoreparties.co/v1/wff-cohort-33/cards'
 }
 
-//PR6
+const formsValidationDataSet = {
+  errorSelector: 'popup__input_error',
+  inputSelector: '.popup__input',
+  buttonSelector: '.popup__button',
+  buttonDisabledClass: 'popup__button_disabled',
+  formSelector: '.popup__form',
+  errorMark: '-error'
+}
+
 const imagePopUpHandler = (userImage) => {
   popUpImageProp.src = userImage.src;
   popUpImageProp.alt = userImage.alt;
@@ -63,48 +76,81 @@ const cardHandlers = {
   deleteButtonHandler: deleteObjectHandler,
   popUpHandler: imagePopUpHandler,
   likeHandler: imageLikeHandler,
-  dataHandler: sendData
+  webApi: apiHandler
 }
 
 const intPopUpWindows = () => {
-  //установить общие свойства модальных окон 
+  //установка общих свойств для попапов
   armPopUps();
   // открыть Add
   addOpenBtn.addEventListener("click", function () {
     if (newPlaceDescr.value !== "" || newPlaceUrl.value !== "") {
       addNewPlaceForm.reset();
     }
-    resetValidation(addNewPlaceForm);
+    clearValidation(addNewPlaceForm, formsValidationDataSet);
+    addPopUp.querySelector('.popup__button').textContent = 'Сохранить';
     handlePopUpOpen(addPopUp);
   });
   //открыть Edit
   editOpenBtn.addEventListener("click", function () {
     editProfileFormnNameInput.value = currentProfileName.textContent;
     editProfileFormnJobInput.value = currentProfileJob.textContent;
-    resetValidation(editProfileForm);
+    let editPopUpSubmBtn = editPopUp.querySelector('.popup__button');
+    editPopUpSubmBtn.textContent = 'Сохранить';
+    clearValidation(editProfileForm, formsValidationDataSet);
     handlePopUpOpen(editPopUp);
   });
   //сабмит Edit
   editProfileForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
-    currentProfileName.textContent = editProfileFormnNameInput.value;
-    currentProfileJob.textContent = editProfileFormnJobInput.value;
-    handlePopUpClose(editPopUp);
+    evt.target.querySelector('.popup__button').textContent = 'Сохранение...';
+    let profileData = {name: editProfileFormnNameInput.value, about: editProfileFormnJobInput.value };
+    apiHandler(apiDataSet.linkProfile, apiDataSet.authToken, 'PATCH', profileData)
+    .then((result) => {
+      currentProfileName.textContent = result.name;
+      currentProfileJob.textContent = result.about;
+      handlePopUpClose(editPopUp);
+    });
+  });
+   //открыть Edit-Avatar
+  editAvatarOpenBtn.addEventListener("click", function () {
+    console.log('open ava-edit');
+    changeAvatarForm.reset();
+    editAvatarPopUp.querySelector('.popup__button').textContent = 'Сохранить';
+    clearValidation(changeAvatarForm, formsValidationDataSet);
+    handlePopUpOpen(editAvatarPopUp);
+  });
+  //сабмит Edit-Avatar
+  editAvatarPopUp.addEventListener("submit", function (evt) {
+    evt.preventDefault();
+    evt.target.querySelector('.popup__button').textContent = 'Сохранение...';
+    let profileAvatar = {avatar: changeAvatarUrl.value };
+    let avatarLink = apiDataSet.linkProfile + '/avatar';
+    apiHandler(avatarLink, apiDataSet.authToken, 'PATCH', profileAvatar)
+    .then((result) => {
+      console.log('ProfileUpDateAvatar', result);
+      currentProfileImage.style.cssText= 'background-image: url(' + result.avatar +')';
+    });
+    changeAvatarForm.reset();
+    handlePopUpClose(editAvatarPopUp);
   });
   //Сабмит add
   addNewPlaceForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
+    evt.target.querySelector('.popup__button').textContent = 'Сохранение...';
     if (newPlaceDescr.value !== "" && newPlaceUrl.value !== "") {
       let newCard = {
         name: newPlaceDescr.value,
         link: newPlaceUrl.value,
       };
-
-      sendData(apiSetUp.linkCards, apiSetUp.authToken, 'POST', newCard)
+      apiHandler(apiDataSet.linkCards, apiDataSet.authToken, 'POST', newCard)
       .then ((result) => {
-        placesContainerCardsList.prepend(
-          createCardObject(cardTemplateItem, result, cardHandlers, result.owner._id, apiSetUp)
+          placesContainerCardsList.prepend(
+          createCardObject(cardTemplateItem, result, cardHandlers, apiDataSet)
         );
+        })
+        .catch((err) => {
+          console.log(err);
         });
         addNewPlaceForm.reset(); 
       }
@@ -122,144 +168,47 @@ const armPopUps = () =>{
     });
   });
 }
-//игры с АПИ
-//получить данные
- const getData =  (addr, token) => {return fetch(addr, {
-    headers: {
-      authorization: token
-    }
-  })
-    .then(res => res.json())
-    .then((result) => {
-      return new Promise((resolve, reject)=> {
-        resolve(result);
-      });
-    }); 
- } 
-
- //тестовые данные
- let testPerson = {name: 'Родченко', about: 'photographer' };
- let testImage = { name: 'Припять', link: 'https://sun9-58.userapi.com/impg/PKjUPNzRPQmTrSKtOQEvcvzC3A78eMbx0Shs3g/eDaJVNCorTw.jpg?size=1920x1280&quality=96&sign=b494541b54ed059a0b57baab88b58944&type=album'};
-
-
- //Рабочая функция, меняет профиль
-/*const patchData = (addr, token, data) => {
-  return  fetch(addr, {
-    method: 'PATCH',
-    headers: {
-      authorization: token,
-      'Content-Type': 'application/json'
-   },
-    body: JSON.stringify(data)
-  })
-  .then(res => res.json())
-  .then((result) => {
-    return new Promise((resolve, reject)=> {
-      console.log('patch result', result.name);
-      resolve(result);
-    });
-  })
-}*/
-
-/*const postData = (addr,token, data)  => {
-  return  fetch(addr, {
-    method: 'POST',
-    headers: {
-      authorization: token,
-      'Content-Type': 'application/json'
-   },
-    body: JSON.stringify(data)
-  })
-  .then(res => res.json())
-  .then((result) => {
-    return new Promise((resolve, reject)=> {
-      console.log('post result', result.name);
-      resolve(result);
-    });
-  })
-}*/
-
-//Универсальная функция PATCH/POST @toDO addr,token, mtd - загнать в объект
-const sendData = (addr,token, mtd, data)  => {
-  return  fetch(addr, {
-    method: mtd,
-    headers: {
-      authorization: token,
-      'Content-Type': 'application/json'
-   },
-    body: JSON.stringify(data)
-  })
-  .then(res => res.json())
-  .then((result) => {
-    return new Promise((resolve, reject)=> {
-      //console.log('post result', result.name);
-      resolve(result);
-    });
-  })
-}
-
-
- 
-
  //Установить профиль
- const setProfile = (profileData) => {
+const setProfile = (profileData) => {
   currentProfileName.textContent = profileData.name;
   currentProfileJob.textContent = profileData.about;
   currentProfileImage.style.cssText= 'background-image: url(' + profileData.avatar +')';
   //console.log('background-image:' + userImage);
- }
+}
 
- 
+//исполняемый код 
 
-//исполняемый код
+// инициализация элементов
 intPopUpWindows();
-
-//тестовый вызов смены профиля
-//sendData('https://nomoreparties.co/v1/wff-cohort-33/users/me', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a', 'PATCH', testPerson);
-
-
-
-//тестовое добовление карточки
-//sendData('https://nomoreparties.co/v1/wff-cohort-33/cards', 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a','POST',testImage);
-
-//эта функция инициирует отрисовку из файла - так было в PR6
-/*initialCards.forEach((item) => {
-  placesContainerCardsList.append(
-    createCardObject(cardTemplateItem, item, cardHandlers)
-  );
-});*/
-
-//PR7
-//enableValidation(addNewPlaceForm, null);
-enableValidation();
-
-//console.log('handlers.dataHandler', cardHandler);
-
-//грузим профиль через промис
-let a = getData(apiSetUp.linkProfile, apiSetUp.authToken)
+// инициализация валидации
+enableValidation(formsValidationDataSet);
+//грузим профиль через промис, отрисовываем профиль и возвращаем Id пользователя
+let profile_Id = apiHandler(apiDataSet.linkProfile, apiDataSet.authToken)
 .then((evt) => {
-  //console.log('ME', evt._id);
   setProfile(evt);
   return new Promise((resolve, reject)=> {
     resolve(evt._id);
   });
+})
+.catch((err) =>{
+  console.log('Ошибка при загрузке профиля',err);
 });
-//грузим данные карточек
-let b = getData(apiSetUp.linkCards, apiSetUp.authToken);
-
-//собираем промисы
-let promises = [a,b];
-
+//грузим данные карточек 
+let cards = apiHandler(apiDataSet.linkCards, apiDataSet.authToken)
+.catch((err) =>{
+  console.log('Ошибка при загрузке карточек пользователей', err);
+});
+//собираем промисы профиля и карточек
+let allDataReady = [profile_Id, cards];
 //рисуем карточки если все промисы выполнены
-Promise.all(promises)
+Promise.all(allDataReady)
 .then((dataSet) => {
-  //console.log('dateset', dataSet[1][0]);
+  apiDataSet.ownerId = dataSet[0]; //записываем свой ИД в набор данных
   dataSet[1].forEach((dataItem) =>{
     placesContainerCardsList.append(
-      createCardObject(cardTemplateItem, dataItem, cardHandlers, dataSet[0], apiSetUp)
+      createCardObject(cardTemplateItem, dataItem, cardHandlers, apiDataSet)
     );
   });
 });
 
-  //ownerID = evt._id;
-//@to-do delete button 
+

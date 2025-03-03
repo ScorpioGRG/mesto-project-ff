@@ -20,6 +20,7 @@
   opacity: 0.6;
 }
 
+
 @media screen and (max-width: 480px) {
   .profile__edit-button {
     width: 18px;
@@ -27,3 +28,37 @@
     background-size: 8px 8px;
   }
 }
+
+
+.profile__edit__avatar_button {
+  cursor: pointer;
+  width: 120px;
+  height: 120px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  margin: 0 29px 0 0;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -ms-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+  border: none;
+}
+
+.profile__edit__avatar_button:hover {
+  opacity: 0.3;
+}
+
+.profile__image:hover::before {
+  position: absolute;
+  top:45%;
+  left: 55px;
+  content: url('../../../images/edit-icon.svg');
+  align-self: center;
+  transform-origin: center;
+  transform: scale(2.5);
+}
+

@@ -26,29 +26,15 @@ export const initialCards = [
   },
 ];
 
-
-//DELETE https://nomoreparties.co/v1/cohortId/cards/cardId 
-
-const findID = (dataSet, field, searchValue) => {
+const setOwnerAttribute = (dataSet, field, searchValue, objToSET, ClassToSet) => {
   dataSet.forEach(element => {
-    //console.log('likeID', element[field]);
- 
    if(element[field] === searchValue) {
-    console.log('TRUE');
-    return  new Promise ((resolve, reject) => {
-      resolve (true);
-    }); 
+   objToSET.classList.add(ClassToSet);
   }
   });
-  console.log('false');
-  return new Promise ((resolve, reject) => {
-    resolve (false);
-  }); 
 }
 
-
-
-export const createCardObject = (template, data, handlers, userID, api) => {
+export const createCardObject = (template, data, handlers, api) => {
   const userPlacesItem = template.cloneNode(true);
   const userPlaceImageLikeButton = userPlacesItem.querySelector(".card__like-button");
   const userPlaceImageLikeCount = userPlacesItem.querySelector(".card__like-count");
@@ -63,84 +49,48 @@ export const createCardObject = (template, data, handlers, userID, api) => {
     handlers.popUpHandler(userPlacesImage);
   });
   userPlaceImageLikeButton.addEventListener("click", function (event) {
-    handlers.likeHandler(userPlaceImageLikeButton, userPlaceImageLikeCount, api, data);
+    handlers.likeHandler(userPlaceImageLikeButton, userPlaceImageLikeCount, api, data, handlers.webApi);
   });
-  if(userPlaceImageOwner === userID) {
+  if(userPlaceImageOwner === api.ownerId) {
     buttonDelete.addEventListener("click", function (event) {
-      //handlers.dataHandler(apiAddress, api.authToken, 'DELETE', null);
-      
-      //handlers.dataHandler()
-     handlers.deleteButtonHandler(userPlacesItem, api, data);
+     handlers.deleteButtonHandler(userPlacesItem, api, data, handlers.webApi);
     });
   } else buttonDelete.classList.add("popup__button_hidden");
-  //let likeID =  data.likes
-  //console.log('data.likes', data.likes);
-  //console.log('findID ', findID(data.likes, '_id', userID));
- 
-
-  //if(findID(data.likes, '_id', userID)) {
-    //console.log('data.likes', data.likes);
-   // console.log('IF TRUE');
-  
-   //findID(data.likes, '_id', userID)
-   /*.then ((result) =>{
-    if(result) { 
-      userPlaceImageLikeButton.classList.add("card__like-button_is-active");
-      
-    }
-    return new Promise ((resolve, reject) => {
-      resolve (userPlacesItem);
-    }); 
-    return userPlacesItem;
-
-   })*/     
-  console.log('card created');
-  findID(data.likes, '_id', userID);
+  setOwnerAttribute(data.likes, '_id', api.ownerId, userPlaceImageLikeButton, 'card__like-button_is-active');
     return userPlacesItem;
 }
 
-// @todo: Функция удаления карточки
-export const deleteObjectHandler =  (obj,api,data) => {
+export const deleteObjectHandler =  (obj,api,data, apiHandler) => {
   let apiAddress = api.linkCards + '/' + data._id;
-  
-  fetch(apiAddress, {
-    method: 'DELETE',
-    headers: {
-      authorization: api.authToken
-   }
+  apiHandler(apiAddress, api.authToken, 'DELETE')
+  .then ((result) => { 
+    obj.remove();
   })
-  .then ((result) => { obj.remove();})
-  //obj.remove();
+  .catch((err) => {
+    console.log(err);
+  });
 }
 
-// Функция Лайка карточки - переписана, замечание 2
-export const imageLikeHandler = (obj, likeCount, api, data) => {
+export const imageLikeHandler = (obj, likeCount, api, data, apiHandler) => {
   let apiAddress = api.linkCards + '/likes/' +  data._id;
-  
   if(obj.classList.contains("card__like-button_is-active")) {
-    fetch(apiAddress, {
-      method: 'DELETE',
-      headers: {
-        authorization: api.authToken
-     }
-    })
-    .then(res => res.json())
+   apiHandler(apiAddress, api.authToken, 'DELETE')
     .then((result) => {
       likeCount.textContent = result.likes.length;
       obj.classList.toggle("card__like-button_is-active");
-    })  
-  } else {
-    fetch(apiAddress, {
-      method: 'PUT',
-      headers: {
-        authorization: api.authToken
-     }
     })
-    .then(res => res.json())
+    .catch((err) => {
+      console.log(err);
+    });
+  } else {
+    apiHandler(apiAddress, api.authToken, 'PUT')
     .then((result) =>{
       console.log('like result', result);
       likeCount.textContent = result.likes.length;
       obj.classList.toggle("card__like-button_is-active");
     })
+    .catch((err) => {
+      console.log(err);
+    });
   } 
 }
