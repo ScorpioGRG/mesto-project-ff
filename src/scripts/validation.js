@@ -1,7 +1,7 @@
 //проверить валидность и вызвать обработчик
 const checkValidity = (form, input, valDataSet) => {
   if (!input.validity.valid) {
-    showInputError(form, input, valDataSet, /*input.validationMessage*/ input.dataset.errorMessage)
+    showInputError(form, input, valDataSet, input.dataset.errorMessage)
   } else {
     hideInputError(form, input, valDataSet);
   }
