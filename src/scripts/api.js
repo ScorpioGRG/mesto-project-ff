@@ -1,11 +1,19 @@
+
+const config = {
+  baseUrl: 'https://nomoreparties.co/v1/wff-cohort-33',
+  headers: {
+    authorization: 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a',
+    'Content-Type': 'application/json',
+  }
+};
+
 //Универсальная функция PATCH/POST/GET
-export const apiHandler = (addr,token, mtd, data)  => {
-  return fetch(addr, {
+
+
+export const requestData = (addrPrefix, mtd, data)  => {
+  return fetch(config.baseUrl + addrPrefix, {
     method: mtd,
-    headers: {
-      authorization: token,
-      'Content-Type': 'application/json'
-    },
+    headers: config.headers,
     body: JSON.stringify(data)
   })
   .then(res => {

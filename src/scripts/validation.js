@@ -9,22 +9,22 @@ const checkValidity = (form, input, valDataSet) => {
 
 //подсветить поле и вывести текст
 const showInputError = (form, input, valDataSet, errorMessage) => {
-  let textErrorDescInput = form.querySelector('.' + input.id + valDataSet.errorMark );
+  const textErrorDescInput = form.querySelector('.' + input.id + valDataSet.errorMark );
   input.classList.add(valDataSet.errorSelector);
   textErrorDescInput.textContent = errorMessage;
 }
 
 //убрать подсветку и заменить текст пустой строкой
 const hideInputError = (form, input, valDataSet) => {
-  let textErrorDescInput = form.querySelector('.' + input.id + valDataSet.errorMark);
+  const textErrorDescInput = form.querySelector('.' + input.id + valDataSet.errorMark);
   input.classList.remove(valDataSet.errorSelector);
   textErrorDescInput.textContent = '';
 }
 
 //найти все инпуты, повесить листенеры с обработчиками
 const armFormValidationEventListeners = (form, valDataSet) => {
-  let inputsList = Array.from(form.querySelectorAll(valDataSet.inputSelector));
-  let btn = form.querySelector(valDataSet.buttonSelector);
+  const inputsList = Array.from(form.querySelectorAll(valDataSet.inputSelector));
+  const btn = form.querySelector(valDataSet.buttonSelector);
   toggleButton(inputsList, btn, valDataSet);
   inputsList.forEach((inputItem) => {
     inputItem.addEventListener('input', () => { 
@@ -54,7 +54,7 @@ const toggleButton = (inputsList, button, valDataSet) => {
 
 //подключить валидацию
 export const enableValidation = (valDataSet) => {
-  let formsList = Array.from(document.querySelectorAll(valDataSet.formSelector));
+  const formsList = Array.from(document.querySelectorAll(valDataSet.formSelector));
   formsList.forEach((formItem) => {
     armFormValidationEventListeners(formItem, valDataSet);
   }); 
@@ -62,11 +62,11 @@ export const enableValidation = (valDataSet) => {
 
 //сбросить результат валидации
 export const clearValidation = (form, valDataSet) => {
-  let inputsList = Array.from(form.querySelectorAll(valDataSet.inputSelector));
+  const inputsList = Array.from(form.querySelectorAll(valDataSet.inputSelector));
   inputsList.forEach((inputItem) => {
     hideInputError(form, inputItem, valDataSet);
   });
-  let submitBtn = form.querySelector(valDataSet.buttonSelector)
+  const submitBtn = form.querySelector(valDataSet.buttonSelector)
   if(!submitBtn.classList.contains(valDataSet.buttonDisabledClass)) {
     submitBtn.classList.add(valDataSet.buttonDisabledClass);
   }

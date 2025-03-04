@@ -61,8 +61,8 @@ export const createCardObject = (template, data, handlers, api) => {
 }
 
 export const deleteObjectHandler =  (obj,api,data, apiHandler) => {
-  let apiAddress = api.linkCards + '/' + data._id;
-  apiHandler(apiAddress, api.authToken, 'DELETE')
+  const apiAddress = api.linkCards + '/' + data._id;
+  apiHandler(apiAddress, 'DELETE')
   .then ((result) => { 
     obj.remove();
   })
@@ -72,9 +72,10 @@ export const deleteObjectHandler =  (obj,api,data, apiHandler) => {
 }
 
 export const imageLikeHandler = (obj, likeCount, api, data, apiHandler) => {
-  let apiAddress = api.linkCards + '/likes/' +  data._id;
+  const apiAddress = api.linkCardLikes + data._id;
+  
   if(obj.classList.contains("card__like-button_is-active")) {
-   apiHandler(apiAddress, api.authToken, 'DELETE')
+   apiHandler(apiAddress, 'DELETE')
     .then((result) => {
       likeCount.textContent = result.likes.length;
       obj.classList.toggle("card__like-button_is-active");
@@ -83,9 +84,8 @@ export const imageLikeHandler = (obj, likeCount, api, data, apiHandler) => {
       console.log(err);
     });
   } else {
-    apiHandler(apiAddress, api.authToken, 'PUT')
+    apiHandler(apiAddress, 'PUT')
     .then((result) =>{
-      console.log('like result', result);
       likeCount.textContent = result.likes.length;
       obj.classList.toggle("card__like-button_is-active");
     })

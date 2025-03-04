@@ -12,7 +12,7 @@ export const handlePopUpClose = (popUpWindow) => {
 
 const closePopUpByEsc = (evt) => {
   if (evt.key === "Escape") {
-    let activePopUpWindow = document.querySelector('.popup_is-opened');
+    const activePopUpWindow = document.querySelector('.popup_is-opened');
     handlePopUpClose(activePopUpWindow);
   }
 }

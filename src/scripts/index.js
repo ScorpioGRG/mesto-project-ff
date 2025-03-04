@@ -16,7 +16,8 @@ import {
 } from "./modal.js";
 
 import {
-  apiHandler
+  requestData,
+  requestDataNew
 } from "./api.js";
 
 // @todo: Темплейт карточки
@@ -34,8 +35,8 @@ const editPopUp = document.querySelector(".popup_type_edit");
 const editAvatarPopUp =  document.querySelector(".popup_type_edit-avatar");
 const addPopUp = document.querySelector(".popup_type_new-card");
 const editProfileForm = document.forms["edit-profile"];
-const editProfileFormnNameInput = editProfileForm.name;
-const editProfileFormnJobInput = editProfileForm.description;
+const editProfileFormNameInput = editProfileForm.name;
+const editProfileFormJobInput = editProfileForm.description;
 const currentProfileName = document.querySelector(".profile__title");
 const currentProfileJob = document.querySelector(".profile__description");
 const currentProfileImage = document.querySelector(".profile__edit__avatar_button");
@@ -51,9 +52,10 @@ const changeAvatarUrl = changeAvatarForm.link;
 
 //не const, что бы далее записать сюда свой Id
 let apiDataSet = {
-  authToken: 'b3ccccd1-a8c7-4152-a066-4b44c9241c5a',
-  linkProfile: 'https://nomoreparties.co/v1/wff-cohort-33/users/me',
-  linkCards: 'https://nomoreparties.co/v1/wff-cohort-33/cards'
+  linkProfile: '/users/me',
+  linkCards: '/cards',
+  linkCardLikes: '/cards/likes/',
+  linkProfileAvatar:'/users/me/avatar'
 }
 
 const formsValidationDataSet = {
@@ -65,7 +67,7 @@ const formsValidationDataSet = {
   errorMark: '-error'
 }
 
-const imagePopUpHandler = (userImage) => {
+const handlePopUpImage = (userImage) => {
   popUpImageProp.src = userImage.src;
   popUpImageProp.alt = userImage.alt;
   popUpImageDesc.textContent = userImage.alt;
@@ -74,9 +76,9 @@ const imagePopUpHandler = (userImage) => {
 
 const cardHandlers = {
   deleteButtonHandler: deleteObjectHandler,
-  popUpHandler: imagePopUpHandler,
+  popUpHandler: handlePopUpImage,
   likeHandler: imageLikeHandler,
-  webApi: apiHandler
+  webApi: requestData
 }
 
 const intPopUpWindows = () => {
@@ -88,79 +90,87 @@ const intPopUpWindows = () => {
       addNewPlaceForm.reset();
     }
     clearValidation(addNewPlaceForm, formsValidationDataSet);
-    addPopUp.querySelector('.popup__button').textContent = 'Сохранить';
     handlePopUpOpen(addPopUp);
+  });
+  //Сабмит Add
+  addNewPlaceForm.addEventListener("submit", function (evt) {
+    evt.preventDefault();
+    evt.submitter.textContent = 'Сохранение...';
+    if (newPlaceDescr.value !== "" && newPlaceUrl.value !== "") {
+      const newCard = {
+        name: newPlaceDescr.value,
+        link: newPlaceUrl.value,
+      };
+      requestData(apiDataSet.linkCards, 'POST', newCard)
+        .then ((result) => {
+          placesContainerCardsList.prepend(
+          createCardObject(cardTemplateItem, result, cardHandlers, apiDataSet));
+          handlePopUpClose(addPopUp);
+          addNewPlaceForm.reset();
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          evt.submitter.textContent = 'Сохранить';
+        });
+      }
   });
   //открыть Edit
   editOpenBtn.addEventListener("click", function () {
-    editProfileFormnNameInput.value = currentProfileName.textContent;
-    editProfileFormnJobInput.value = currentProfileJob.textContent;
-    let editPopUpSubmBtn = editPopUp.querySelector('.popup__button');
-    editPopUpSubmBtn.textContent = 'Сохранить';
+    editProfileFormNameInput.value = currentProfileName.textContent;
+    editProfileFormJobInput.value = currentProfileJob.textContent;
     clearValidation(editProfileForm, formsValidationDataSet);
     handlePopUpOpen(editPopUp);
   });
   //сабмит Edit
   editProfileForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
-    evt.target.querySelector('.popup__button').textContent = 'Сохранение...';
-    let profileData = {name: editProfileFormnNameInput.value, about: editProfileFormnJobInput.value };
-    apiHandler(apiDataSet.linkProfile, apiDataSet.authToken, 'PATCH', profileData)
+    evt.submitter.textContent = 'Сохранение...';
+    const profileData = {name: editProfileFormNameInput.value, about: editProfileFormJobInput.value };
+    requestData(apiDataSet.linkProfile, 'PATCH', profileData)
     .then((result) => {
       currentProfileName.textContent = result.name;
       currentProfileJob.textContent = result.about;
       handlePopUpClose(editPopUp);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      evt.submitter.textContent = 'Сохранить';
     });
   });
    //открыть Edit-Avatar
   editAvatarOpenBtn.addEventListener("click", function () {
     console.log('open ava-edit');
     changeAvatarForm.reset();
-    editAvatarPopUp.querySelector('.popup__button').textContent = 'Сохранить';
     clearValidation(changeAvatarForm, formsValidationDataSet);
     handlePopUpOpen(editAvatarPopUp);
   });
   //сабмит Edit-Avatar
   editAvatarPopUp.addEventListener("submit", function (evt) {
     evt.preventDefault();
-    evt.target.querySelector('.popup__button').textContent = 'Сохранение...';
-    let profileAvatar = {avatar: changeAvatarUrl.value };
-    let avatarLink = apiDataSet.linkProfile + '/avatar';
-    apiHandler(avatarLink, apiDataSet.authToken, 'PATCH', profileAvatar)
+    evt.submitter.textContent = 'Сохранение...';
+    const profileAvatar = {avatar: changeAvatarUrl.value };
+    requestData(apiDataSet.linkProfileAvatar,'PATCH', profileAvatar)
     .then((result) => {
-      console.log('ProfileUpDateAvatar', result);
       currentProfileImage.style.cssText= 'background-image: url(' + result.avatar +')';
+      handlePopUpClose(editAvatarPopUp);
+      changeAvatarForm.reset();
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      evt.submitter.textContent = 'Сохранить';
     });
-    changeAvatarForm.reset();
-    handlePopUpClose(editAvatarPopUp);
   });
-  //Сабмит add
-  addNewPlaceForm.addEventListener("submit", function (evt) {
-    evt.preventDefault();
-    evt.target.querySelector('.popup__button').textContent = 'Сохранение...';
-    if (newPlaceDescr.value !== "" && newPlaceUrl.value !== "") {
-      let newCard = {
-        name: newPlaceDescr.value,
-        link: newPlaceUrl.value,
-      };
-      apiHandler(apiDataSet.linkCards, apiDataSet.authToken, 'POST', newCard)
-      .then ((result) => {
-          placesContainerCardsList.prepend(
-          createCardObject(cardTemplateItem, result, cardHandlers, apiDataSet)
-        );
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-        addNewPlaceForm.reset(); 
-      }
-    addNewPlaceFormSubmitBtn.classList.add('popup__button_disabled');
-    handlePopUpClose(addPopUp);
-  });
+
 }
 //установка общих свойств для попапов
 const armPopUps = () =>{
-  let popUps = document.querySelectorAll('.popup');
+  const popUps = document.querySelectorAll('.popup');
   popUps.forEach((item)=> {
     item.classList.add('popup_is-animated');
     item.querySelector('.popup__close').addEventListener("click", function () {
@@ -173,7 +183,6 @@ const setProfile = (profileData) => {
   currentProfileName.textContent = profileData.name;
   currentProfileJob.textContent = profileData.about;
   currentProfileImage.style.cssText= 'background-image: url(' + profileData.avatar +')';
-  //console.log('background-image:' + userImage);
 }
 
 //исполняемый код 
@@ -183,7 +192,7 @@ intPopUpWindows();
 // инициализация валидации
 enableValidation(formsValidationDataSet);
 //грузим профиль через промис, отрисовываем профиль и возвращаем Id пользователя
-let profile_Id = apiHandler(apiDataSet.linkProfile, apiDataSet.authToken)
+const profile_Id =  requestData(apiDataSet.linkProfile) /*requestDataNew('/cards') requestData(apiDataSet.linkProfile, apiDataSet.authToken)*/
 .then((evt) => {
   setProfile(evt);
   return new Promise((resolve, reject)=> {
@@ -194,12 +203,12 @@ let profile_Id = apiHandler(apiDataSet.linkProfile, apiDataSet.authToken)
   console.log('Ошибка при загрузке профиля',err);
 });
 //грузим данные карточек 
-let cards = apiHandler(apiDataSet.linkCards, apiDataSet.authToken)
+const cards = requestData(apiDataSet.linkCards)
 .catch((err) =>{
   console.log('Ошибка при загрузке карточек пользователей', err);
 });
 //собираем промисы профиля и карточек
-let allDataReady = [profile_Id, cards];
+const allDataReady = [profile_Id, cards];
 //рисуем карточки если все промисы выполнены
 Promise.all(allDataReady)
 .then((dataSet) => {
@@ -209,6 +218,9 @@ Promise.all(allDataReady)
       createCardObject(cardTemplateItem, dataItem, cardHandlers, apiDataSet)
     );
   });
+})
+.catch((err) => {
+  console.log('Произошла ошибка: ', err);
 });
 
 
